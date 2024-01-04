@@ -1,4 +1,4 @@
-
+import './pages/index.css';
 
 const placesList = document.querySelector('.places__list');
 const cardTemplate = document.querySelector('#card-template').content;
@@ -26,3 +26,6 @@ function deleteCard(event) {
 initialCards.forEach(function(elem) {
     placesList.append(createCard(elem.name, elem.link, deleteCard))
 })
+
+// document.forms.edit-profile
+// document.forms.new-place
