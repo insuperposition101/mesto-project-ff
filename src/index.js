@@ -1,83 +1,104 @@
 import "./pages/index.css";
 import { initialCards } from "./scripts/cards.js";
-import { createCard, deleteCard } from "./components/card.js";
+import { createCard, deleteCard, likeCard } from "./components/card.js";
 import { openPopup, closePopup } from "./components/modal.js";
 
 const placesList = document.querySelector(".places__list");
 
 initialCards.forEach(function (elem) {
-  placesList.append(createCard(elem.name, elem.link, deleteCard));
+  placesList.append(
+    createCard(elem.name, elem.link, deleteCard, likeCard, makeImagePopup)
+  );
 });
 
 // ПОПАПЫ
 
-const PopupForEdit = document.querySelector(".popup_type_edit");
-const PopupNewCard = document.querySelector(".popup_type_new-card");
-const PopupImage = document.querySelector(".popup_type_image");
+const popupForEdit = document.querySelector(".popup_type_edit");
+const popupNewCard = document.querySelector(".popup_type_new-card");
+const popupImage = document.querySelector(".popup_type_image");
 
 // КНОПКИ ПОПАПОВ + СЛУШАТЕЛИ
 
-const ButtonProfEdit = document.querySelector(".profile__edit-button");
-const ButtonNewCard = document.querySelector(".profile__add-button");
+const buttonProfEdit = document.querySelector(".profile__edit-button");
+const buttonNewCard = document.querySelector(".profile__add-button");
 
-ButtonProfEdit.addEventListener("click", () => openPopup(PopupForEdit));
-ButtonNewCard.addEventListener("click", () => openPopup(PopupNewCard));
+buttonProfEdit.addEventListener("click", function () {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileDescription.textContent;
+  openPopup(popupForEdit);
+});
+
+buttonNewCard.addEventListener("click", () => openPopup(popupNewCard));
 
 // КПОПКИ-КРЕСТИКИ И ИХ СЛУШАТЕЛИ
 
-const CrossButtonEdit = document.querySelector(
+const crossButtonEdit = document.querySelector(
   ".popup_type_edit .popup__close"
 );
-const CrossButtonNewCard = document.querySelector(
+const crossButtonNewCard = document.querySelector(
   ".popup_type_new-card .popup__close"
 );
-const CrossButtonImage = document.querySelector(
+const crossButtonImage = document.querySelector(
   ".popup_type_image .popup__close"
 );
 
-CrossButtonEdit.addEventListener("click", () => closePopup(PopupForEdit));
-CrossButtonNewCard.addEventListener("click", () => closePopup(PopupNewCard));
-CrossButtonImage.addEventListener("click", () => closePopup(PopupImage));
+crossButtonEdit.addEventListener("click", () => closePopup(popupForEdit));
+crossButtonNewCard.addEventListener("click", () => closePopup(popupNewCard));
+crossButtonImage.addEventListener("click", () => closePopup(popupImage));
 
 // ФОРМА РЕДАКТИРОВАНИЯ ПРОФИЛЯ
 
-const formElement = document.querySelector('[name="edit-profile"]');
+const editFormElement = document.querySelector('[name="edit-profile"]');
 
-const nameInput = formElement.querySelector('[name="name"]');
-const jobInput = formElement.querySelector('[name="description"]');
+const nameInput = editFormElement.querySelector('[name="name"]');
+const jobInput = editFormElement.querySelector('[name="description"]');
 
-const ProfileName = document.querySelector(".profile__title");
-const ProfileDescription = document.querySelector(".profile__description");
+const profileName = document.querySelector(".profile__title");
+const profileDescription = document.querySelector(".profile__description");
 
-formElement.addEventListener("submit", handleFormSubmit);
+editFormElement.addEventListener("submit", profEditHandleFormSubmit);
 
-function handleFormSubmit(evt) {
+function profEditHandleFormSubmit(evt) {
   evt.preventDefault();
 
-  ProfileName.textContent = nameInput.value;
-  ProfileDescription.textContent = jobInput.value;
+  profileName.textContent = nameInput.value;
+  profileDescription.textContent = jobInput.value;
 
-  closePopup(PopupForEdit);
+  closePopup(popupForEdit);
 }
 
 // ФОРМА ДОБАВЛЕНИЯ КАРТОЧКИ
 
 const addFormElement = document.querySelector('[name="new-place"]');
-const TitleValue = addFormElement.querySelector('[name="place-name"]');
-const LinkValue = addFormElement.querySelector('[name="link"]');
+const titleValue = addFormElement.querySelector('[name="place-name"]');
+const linkValue = addFormElement.querySelector('[name="link"]');
 
-addFormElement.addEventListener("submit", NewCardHandleFormSubmit);
+addFormElement.addEventListener("submit", newCardHandleFormSubmit);
 
-function NewCardHandleFormSubmit(evt) {
+function newCardHandleFormSubmit(evt) {
   evt.preventDefault();
 
-  const placeInput = TitleValue.value;
-  const linkInput = LinkValue.value;
+  const placeInput = titleValue.value;
+  const linkInput = linkValue.value;
 
-  placesList.prepend(createCard(placeInput, linkInput));
+  placesList.prepend(
+    createCard(placeInput, linkInput, deleteCard, likeCard, makeImagePopup)
+  );
 
-  closePopup(PopupNewCard);
+  closePopup(popupNewCard);
 
-  TitleValue.value = "";
-  LinkValue.value = "";
+  addFormElement.reset();
+}
+
+// СОЗДАНИЕ ПОПАП-ИЗОБРАЖЕНИЯ
+
+function makeImagePopup(link, name) {
+  const popupImage = document.querySelector(".popup_type_image");
+
+  const image = document.querySelector(".popup__image");
+  const place = document.querySelector(".popup__caption");
+  image.src = link;
+  image.alt = name;
+  place.textContent = name;
+  openPopup(popupImage);
 }

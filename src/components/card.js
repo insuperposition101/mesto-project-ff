@@ -1,28 +1,22 @@
-import { openPopup } from "./modal.js";
-
-export function createCard(name, link, deleteCard) {
+export function createCard(name, link, deleteCard, likeCard, makeImagePopup) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
-  const ButtonDelete = cardElement.querySelector(".card__delete-button");
 
   cardElement.querySelector(".card__image").src = link;
   cardElement.querySelector(".card__image").alt = name;
   cardElement.querySelector(".card__title").textContent = name;
-  ButtonDelete.addEventListener("click", function (event) {
-    deleteCard(event);
-  });
 
+  // КНОПКА УДАЛЕНИЯ
+  const buttonDelete = cardElement.querySelector(".card__delete-button");
+  buttonDelete.addEventListener("click", deleteCard);
+
+  // КНОПКА-ИЗОБРАЖЕНИЕ
   const imageButton = cardElement.querySelector(".card__image");
-  const PopupImage = document.querySelector(".popup_type_image");
-  imageButton.addEventListener("click", function () {
-    const image = document.querySelector(".popup__image");
-    const place = document.querySelector(".popup__caption");
-    image.src = link;
-    image.alt = name;
-    place.textContent = name;
-    openPopup(PopupImage);
+  imageButton.addEventListener("click", function (event) {
+    makeImagePopup(link, name);
   });
 
+  // КНОПКА ЛАЙКА
   const buttonLike = cardElement.querySelector(".card__like-button");
   buttonLike.addEventListener("click", likeCard);
 
@@ -34,6 +28,6 @@ export function deleteCard(event) {
   listItem.remove();
 }
 
-function likeCard(event) {
+export function likeCard(event) {
   event.target.classList.toggle("card__like-button_is-active");
 }
