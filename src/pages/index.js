@@ -1,19 +1,18 @@
 import "./pages/index.css";
 //import { initialCards } from "./scripts/cards.js";
-import { createCard, deleteCard, likeCard } from "./components/card.js";
-import { openPopup, closePopup } from "./components/modal.js";
+import { createCard, deleteCard, likeCard } from "../components/card.js";
+import { openPopup, closePopup } from "../components/modal.js";
 import {
   enableValidation,
   clearValidation,
-  config,
-} from "./components/validation.js";
+} from "../components/validation.js";
 import {
   getUser,
   getCards,
   addCard,
   editAvatar,
   editUser,
-} from "./components/api.js";
+} from "../components/api.js";
 
 const placesList = document.querySelector(".places__list");
 const avatarImg = document.querySelector(".profile__image");
@@ -65,7 +64,7 @@ const buttonAvatarEdit = document.querySelector(".profile__image");
 buttonProfEdit.addEventListener("click", function () {
   nameInput.value = profileName.textContent;
   jobInput.value = profileDescription.textContent;
-  clearValidation(editFormElement, config);
+  clearValidation(editFormElement, apiConfig);
   openPopup(popupForEdit);
 });
 
@@ -114,9 +113,10 @@ function profEditHandleFormSubmit(evt) {
     name: nameInput.value,
     about: jobInput.value,
   })
-    .then(() => {
-      profileName.textContent = nameInput.value;
-      profileDescription.textContent = jobInput.value;
+    .then((data) => {
+      profileName.textContent = data.name;
+      profileDescription.textContent = data.about;
+      closePopup(popupForEdit);
     })
     .catch((err) => {
       console.log(err);
@@ -124,8 +124,6 @@ function profEditHandleFormSubmit(evt) {
     .finally(() => {
       editButtonText.textContent = "Сохранить";
     });
-
-  closePopup(popupForEdit);
 }
 
 // ФОРМА ДОБАВЛЕНИЯ КАРТОЧКИ
@@ -155,7 +153,9 @@ function newCardHandleFormSubmit(evt) {
           likeCard,
           makeImagePopup
         )
-      );
+      )
+      closePopup(popupNewCard);
+      addFormElement.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -163,24 +163,19 @@ function newCardHandleFormSubmit(evt) {
     .finally(() => {
       newCardButtonText.textContent = "Сохранить";
     });
-
-  closePopup(popupNewCard);
-
-  addFormElement.reset();
-
+  clearValidation(addFormElement, apiConfig);
   newCardButtonText.classList.add("popup__button_disabled");
 }
 
 // СОЗДАНИЕ ПОПАП-ИЗОБРАЖЕНИЯ
 
-function makeImagePopup(link, name) {
-  const popupImage = document.querySelector(".popup_type_image");
+const imageForPopup = document.querySelector(".popup__image");
+const placeForPopup = document.querySelector(".popup__caption");
 
-  const image = document.querySelector(".popup__image");
-  const place = document.querySelector(".popup__caption");
-  image.src = link;
-  image.alt = name;
-  place.textContent = name;
+function makeImagePopup(link, name) {
+  imageForPopup.src = link;
+  imageForPopup.alt = name;
+  placeForPopup.textContent = name;
   openPopup(popupImage);
 }
 
@@ -200,7 +195,8 @@ function editAvatarHandleFormSubmit(evt) {
   editAvatar(link)
     .then((link) => {
       avatarImg.style.backgroundImage = `url(${link.avatar})`;
-      console.log(link.avatar);
+      closePopup(popupForAvatar);
+      editAvatarForm.reset();
     })
     .catch((err) => {
       console.log(err);
@@ -208,13 +204,19 @@ function editAvatarHandleFormSubmit(evt) {
     .finally(() => {
       avatarButtonText.textContent = "Сохранить";
     });
-
-  closePopup(popupForAvatar);
-
-  editAvatarForm.reset();
+  clearValidation(editAvatarForm, apiConfig);
   avatarButtonText.classList.add("popup__button_disabled");
 }
 
 // ВЫЗЫВАЕМ ВАЛИДАЦИЮ
 
-enableValidation(config);
+export const apiConfig = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+enableValidation(apiConfig);
