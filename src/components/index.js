@@ -1,6 +1,6 @@
-import "./pages/index.css";
+import "../pages/index.css";
 //import { initialCards } from "./scripts/cards.js";
-import { createCard, deleteCard, likeCard } from ".card.js";
+import { createCard, deleteCard, likeCard } from "./card.js";
 import { openPopup, closePopup } from "./modal.js";
 import {
   enableValidation,
