@@ -1,18 +1,18 @@
 import "./pages/index.css";
 //import { initialCards } from "./scripts/cards.js";
-import { createCard, deleteCard, likeCard } from "../components/card.js";
-import { openPopup, closePopup } from "../components/modal.js";
+import { createCard, deleteCard, likeCard } from ".card.js";
+import { openPopup, closePopup } from "./modal.js";
 import {
   enableValidation,
   clearValidation,
-} from "../components/validation.js";
+} from "./validation.js";
 import {
   getUser,
   getCards,
   addCard,
   editAvatar,
   editUser,
-} from "../components/api.js";
+} from "./api.js";
 
 const placesList = document.querySelector(".places__list");
 const avatarImg = document.querySelector(".profile__image");
